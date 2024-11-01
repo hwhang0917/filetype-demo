@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "filetype-demo",
   "private": true,
   "type": "module",
   "scripts": {
@@ -7,12 +7,17 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "homepage": "https://hwhang0917.github.io/filetype-demo",
+    "deploy": "gh-pages --dotfiles -d .output/public"
   },
   "dependencies": {
     "file-type": "^19.6.0",
     "nuxt": "^3.13.2",
     "vue": "latest",
     "vue-router": "latest"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.2.0"
   }
 }
