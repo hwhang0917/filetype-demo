@@ -1,15 +1,14 @@
 <template>
-  <div class="container">
+  <main class="container">
     <div class="input-box">
-      <label :for="fileInputId">
-        파일 입력
-      </label>
       <input
-        :id="fileInputId"
         type="file"
         ref="fileInputRef"
         @change="handleFileChange"
       >
+      <button @click="reset">
+        RESET
+      </button>
     </div>
     <div class="result-box">
       <div class="file-type">
@@ -18,63 +17,53 @@
             <code>file-type</code>
           </a>
         </h3>
-        <textarea :value="fileTypeResult" disabled />
+        <ul>
+          <li>
+            <span>EXT: </span>
+            <span>{{ fileTypeResult?.ext || "unknown" }}</span>
+          </li>
+          <li>
+            <span>MIME: </span>
+            <span>{{ fileTypeResult?.mime || "unknown" }}</span>
+          </li>
+        </ul>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 <script lang="ts" setup>
-import "~/assets/reset.css";
-import { fileTypeFromBlob } from "file-type";
+import "@picocss/pico/css/pico.min.css";
+import { fileTypeFromBlob, type FileTypeResult } from "file-type";
 
-const fileInputId = useId();
 const fileInputRef = ref<HTMLInputElement>();
-
-const fileTypeResult = ref<string>("");
+const fileTypeResult = ref<FileTypeResult>();
 
 const handleFileChange = async () => {
   if (fileInputRef.value && fileInputRef.value.files) {
     const file = fileInputRef.value.files[0] || null;
     if (file) {
       const blob = new Blob([file], { type: file.type });
-      const res = await fileTypeFromBlob(blob);
-      let resString = "unknown";
-      if (res) resString = JSON.stringify(res, null, 4);
-      fileTypeResult.value = resString;
+      fileTypeResult.value =  await fileTypeFromBlob(blob);
     }
   }
 }
 
-</script>
-<style lang="css" scoped>
-@import "https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css";
+const reset = () => {
+  if (!fileInputRef.value) return;
+  fileInputRef.value.value = "";
+  fileTypeResult.value = undefined;
+}
 
+</script>
+<style lang="scss" scoped>
+@import "https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css";
 .container {
-  width: 100vw;
-  height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
   font-family: "NanumSquareNeo";
 }
-
-.input-box {
-  width: 50rem;
-  height: 5rem;
-  padding: 2rem 5rem 5rem 5rem;
-  border: 1px solid gray;
-  border-radius: 2rem;
-  display: flex;
-  flex-direction: column;
-}
-    .result-box {
-      display: flex;
-    }
-
-    textarea {
-      width: 15rem;
-      height: 8rem;
-      resize: none;
-    }
 </style>
